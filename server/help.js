@@ -45,12 +45,12 @@ function loadTempData() {
 function loadXML(xmlPath) {
   let userData = xlsx.parse(xmlPath);
   let outData = [];
-  userData.forEach(item => {
+  userData.forEach((item) => {
     outData = item.data;
     outData.shift();
     return false;
   });
-  outData = outData.filter(item => item.length > 0);
+  outData = outData.filter((item) => item.length > 0);
   return outData;
 }
 
@@ -63,12 +63,12 @@ function writeXML(data, name) {
   let buffer = xlsx.build([
     {
       name: "抽奖结果",
-      data: data
-    }
+      data: data,
+    },
   ]);
 
   return new Promise((resolve, reject) => {
-    fs.writeFile(path.join(process.cwd(), name), buffer, err => {
+    fs.writeFile(path.join(process.cwd(), name), buffer, (err) => {
       if (err) {
         reject(err);
         return;
@@ -90,7 +90,7 @@ function saveDataFile(data) {
   }
 
   return new Promise((resolve, reject) => {
-    fs.writeFile(path.join(cwd, "temp.json"), data, err => {
+    fs.writeFile(path.join(cwd, "temp.json"), data, (err) => {
       if (err) {
         reject(err);
         return;
@@ -112,7 +112,7 @@ function saveErrorDataFile(data) {
   }
 
   return new Promise((resolve, reject) => {
-    fs.writeFile(path.join(cwd, "error.json"), data, err => {
+    fs.writeFile(path.join(cwd, "error.json"), data, (err) => {
       if (err) {
         reject(err);
         return;
@@ -143,5 +143,5 @@ module.exports = {
   shuffle,
   writeXML,
   saveDataFile,
-  saveErrorDataFile
+  saveErrorDataFile,
 };
