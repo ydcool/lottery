@@ -267,7 +267,7 @@ module.exports = {
       let host = server.address().address;
       let port = server.address().port;
       global.console.log(`lottery server listenig at http://${host}:${port}`);
-      openBrowser && opn(`http://127.0.0.1:${port}`);
+      //openBrowser && opn(`http://127.0.0.1:${port}`);
     });
   },
 };
