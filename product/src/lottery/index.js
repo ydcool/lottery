@@ -198,19 +198,25 @@ function setLotteryStatus(status = false) {
   isLotting = status;
 }
 
+function setLotteryBtnText(lottering = false) {
+  document.getElementById("lottery").innerText = lottering ? "停止" : "开始";
+}
+
 /**
  * 事件绑定
  */
 function bindEvent() {
   document.querySelector("#menu").addEventListener("click", function (e) {
     e.stopPropagation();
+
+    let target = e.target.id;
+
     // 如果正在抽奖，则禁止一切操作
-    if (isLotting) {
-      addQipao("抽慢一点点～～");
+    if (isLotting && target !== "lottery") {
+      addQipao("别着急，还没抽完呢~");
       return false;
     }
 
-    let target = e.target.id;
     switch (target) {
       // 显示数字墙
       case "welcome":
@@ -249,16 +255,28 @@ function bindEvent() {
         break;
       // 抽奖
       case "lottery":
-        setLotteryStatus(true);
-        // 每次抽奖前先保存上一次的抽奖数据
-        saveData();
-        //更新剩余抽奖数目的数据显示
-        changePrize();
-        resetCard().then((res) => {
-          // 抽奖
-          lottery();
-        });
-        addQipao(`正在抽取[${currentPrize.title}],调整好姿势`);
+        // 切换抽奖状态
+        if (isLotting) {
+          //结束抽奖
+          setLotteryBtnText(false);
+          rotateBall(false);
+          setTimeout(lottery, 1000);
+          // lottery();
+        } else {
+          setLotteryStatus(true);
+          setLotteryBtnText(true);
+          //开始抽奖
+          // 每次抽奖前先保存上一次的抽奖数据
+          saveData();
+          //更新剩余抽奖数目的数据显示
+          changePrize();
+          resetCard().then((res) => {
+            // 抽奖
+            rotateBall(true);
+          });
+          addQipao(`正在抽取[${currentPrize.title}],调整好姿势`);
+        }
+
         break;
       // 重新抽奖
       case "reLottery":
@@ -405,23 +423,32 @@ function transform(targets, duration) {
     .start();
 }
 
-function rotateBall() {
-  return new Promise((resolve, reject) => {
+var currentRotateAnim;
+function rotateBall(start = true) {
+  if (!start) {
+    if (currentRotateAnim !== null) {
+      currentRotateAnim.stop();
+      currentRotateAnim = null;
+      scene.rotation.y = 0;
+    } else {
+      console.error(
+        "rotate animation object should not be null while stopping"
+      );
+    }
+  } else {
     scene.rotation.y = 0;
-    new TWEEN.Tween(scene.rotation)
+    currentRotateAnim = new TWEEN.Tween(scene.rotation)
       .to(
         {
-          y: Math.PI * 8,
+          y: Math.PI * 6000,
         },
-        ROTATE_TIME
+        100000
       )
+      // .repeat(1)
       .onUpdate(render)
       .easing(TWEEN.Easing.Exponential.InOut)
-      .start()
-      .onComplete(() => {
-        resolve();
-      });
-  });
+      .start();
+  }
 }
 
 function onWindowResize() {
@@ -587,35 +614,33 @@ function resetCard(duration = 500) {
  * 抽奖
  */
 function lottery() {
-  rotateBall().then(() => {
-    // 将之前的记录置空
-    currentLuckys = [];
-    selectedCardIndex = [];
-    // 当前同时抽取的数目,当前奖品抽完还可以继续抽，但是不记录数据
-    let perCount = EACH_COUNT[currentPrizeIndex],
-      leftCount = basicData.leftUsers.length;
+  // 将之前的记录置空
+  currentLuckys = [];
+  selectedCardIndex = [];
+  // 当前同时抽取的数目,当前奖品抽完还可以继续抽，但是不记录数据
+  let perCount = EACH_COUNT[currentPrizeIndex],
+    leftCount = basicData.leftUsers.length;
 
-    if (leftCount === 0) {
-      addQipao("人员已抽完，现在重新设置所有人员可以进行二次抽奖！");
-      basicData.leftUsers = basicData.users;
-      leftCount = basicData.leftUsers.length;
+  if (leftCount === 0) {
+    addQipao("人员已抽完，现在重新设置所有人员可以进行二次抽奖！");
+    basicData.leftUsers = basicData.users;
+    leftCount = basicData.leftUsers.length;
+  }
+
+  for (let i = 0; i < perCount; i++) {
+    let luckyId = random(leftCount);
+    currentLuckys.push(basicData.leftUsers.splice(luckyId, 1)[0]);
+    leftCount--;
+
+    let cardIndex = random(TOTAL_CARDS);
+    while (selectedCardIndex.includes(cardIndex)) {
+      cardIndex = random(TOTAL_CARDS);
     }
+    selectedCardIndex.push(cardIndex);
+  }
 
-    for (let i = 0; i < perCount; i++) {
-      let luckyId = random(leftCount);
-      currentLuckys.push(basicData.leftUsers.splice(luckyId, 1)[0]);
-      leftCount--;
-
-      let cardIndex = random(TOTAL_CARDS);
-      while (selectedCardIndex.includes(cardIndex)) {
-        cardIndex = random(TOTAL_CARDS);
-      }
-      selectedCardIndex.push(cardIndex);
-    }
-
-    // console.log(currentLuckys);
-    selectCard();
-  });
+  // console.log(currentLuckys);
+  selectCard();
 }
 
 /**
