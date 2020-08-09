@@ -15,7 +15,7 @@ const DEFAULT_MESS = [
   "新年，祝福大家事事顺遂。",
   "作为专业陪跑的我，我就看看你们有谁跟我一样",
   "新的一年祝福大家越来越好！",
-  "来年再战！！！"
+  "来年再战！！！",
 ];
 
 let lastDanMuList = [];
@@ -26,7 +26,7 @@ class DanMu {
   constructor(option) {
     if (typeof option !== "object") {
       option = {
-        text: option
+        text: option,
       };
     }
 
@@ -54,7 +54,7 @@ class DanMu {
   start(text) {
     let speed = ~~(Math.random() * 10000) + 6000;
     this.position = {
-      x: MAX_WIDTH
+      x: MAX_WIDTH,
     };
     let delay = speed / 10;
 
@@ -65,7 +65,7 @@ class DanMu {
     this.tween = new TWEEN.Tween(this.position)
       .to(
         {
-          x: -this.width
+          x: -this.width,
         },
         speed
       )
@@ -87,7 +87,7 @@ class Qipao {
   constructor(option) {
     if (typeof option !== "object") {
       option = {
-        text: option
+        text: option,
       };
     }
 
@@ -131,7 +131,7 @@ class Qipao {
 
 let addQipao = (() => {
   let qipaoList = [];
-  return function(text) {
+  return function (text) {
     let qipao;
     if (qipaoList.length > 0) {
       qipao = qipaoList.shift();
@@ -139,7 +139,7 @@ let addQipao = (() => {
       qipao = new Qipao({
         onComplete() {
           qipaoList.push(qipao);
-        }
+        },
       });
     }
 
@@ -159,7 +159,7 @@ function showPrizeList(currentPrizeIndex) {
     currentPrize.count === "不限制";
   }
   let htmlCode = `<div class="prize-mess">正在抽取<label id="prizeType" class="prize-shine">${currentPrize.text}</label><label id="prizeText" class="prize-shine">${currentPrize.title}</label>，剩余<label id="prizeLeft" class="prize-shine">${currentPrize.count}</label>个</div><ul class="prize-list">`;
-  prizes.forEach(item => {
+  prizes.forEach((item) => {
     if (item.type === defaultType) {
       return true;
     }
@@ -200,8 +200,8 @@ function resetPrize(currentPrizeIndex) {
   showPrizeList(currentPrizeIndex);
 }
 
-let setPrizeData = (function() {
-  return function(currentPrizeIndex, count, isInit) {
+let setPrizeData = (function () {
+  return function (currentPrizeIndex, count, isInit) {
     let currentPrize = prizes[currentPrizeIndex],
       type = currentPrize.type,
       elements = prizeElement[type],
@@ -211,7 +211,7 @@ let setPrizeData = (function() {
       elements = {
         box: document.querySelector(`#prize-item-${type}`),
         bar: document.querySelector(`#prize-bar-${type}`),
-        text: document.querySelector(`#prize-count-${type}`)
+        text: document.querySelector(`#prize-count-${type}`),
       };
       prizeElement[type] = elements;
     }
@@ -269,7 +269,7 @@ function startMaoPao() {
 
   function restart() {
     total = 0;
-    danmuList.forEach(item => {
+    danmuList.forEach((item) => {
       let text =
         lastDanMuList.length > 0
           ? lastDanMuList.shift()
@@ -284,12 +284,12 @@ function startMaoPao() {
       danmuList.push(
         new DanMu({
           text: DEFAULT_MESS[index++],
-          onComplete: function() {
+          onComplete: function () {
             setTimeout(() => {
               this.start(DEFAULT_MESS[index++]);
               index = index > len ? 0 : index;
             }, 1000);
-          }
+          },
         })
       );
       index = index > len ? 0 : index;
@@ -308,5 +308,5 @@ export {
   addDanMu,
   setPrizes,
   resetPrize,
-  addQipao
+  addQipao,
 };
