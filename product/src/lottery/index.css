@@ -171,6 +171,18 @@ button:active {
   visibility: visible;
 }
 
+#welcomeTxt {
+  color: rgba(127, 255, 255, 0.75);
+  font-size: 3rem;
+  margin: auto;
+  position: absolute;
+  text-align: center;
+  z-index: 2;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
 #prizeBar {
   position: fixed;
   left: 0;

@@ -252,6 +252,7 @@ function bindEvent() {
         resetPrize(currentPrizeIndex);
         reset();
         switchScreen("enter");
+        addPrizeItemListener();
         break;
       // 抽奖
       case "lottery":
@@ -260,8 +261,8 @@ function bindEvent() {
           //结束抽奖
           setLotteryBtnText(false);
           rotateBall(false);
-          setTimeout(lottery, 1000);
-          // lottery();
+          // setTimeout(lottery, 400);
+          lottery();
         } else {
           setLotteryStatus(true);
           setLotteryBtnText(true);
@@ -270,7 +271,7 @@ function bindEvent() {
           saveData();
           //更新剩余抽奖数目的数据显示
           changePrize();
-          resetCard().then((res) => {
+          resetCard().then(() => {
             // 抽奖
             rotateBall(true);
           });
@@ -289,7 +290,7 @@ function bindEvent() {
         setLotteryStatus(true);
         // 重新抽奖则直接进行抽取，不对上一次的抽奖数据进行保存
         // 抽奖
-        resetCard().then((res) => {
+        resetCard().then(() => {
           // 抽奖
           lottery();
         });
@@ -309,11 +310,37 @@ function bindEvent() {
   });
 
   window.addEventListener("resize", onWindowResize, false);
+  addPrizeItemListener();
+}
+
+function addPrizeItemListener() {
+  document.querySelectorAll(".prize-list>li>.prize-img").forEach((v) => {
+    console.log("prize-list:", v.parentElement.id);
+    v.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      let target = e.target.parentElement.parentElement.id;
+
+      console.log("prize item ==>", target);
+      console.log("currentPrize:", currentPrizeIndex, basicData, EACH_COUNT);
+      // currentPrizeIndex = target.replace("prize-item-", "");
+      // currentPrize = basicData.prizes[currentPrizeIndex];
+      // let luckys = basicData.luckyUsers[currentPrize.type];
+      // let luckyCount =
+      //   (luckys ? luckys.length : 0) + EACH_COUNT[currentPrizeIndex];
+      // // 修改左侧prize的数目和百分比
+      // setPrizeData(currentPrizeIndex, luckyCount);
+    });
+  });
 }
 
 function switchScreen(type) {
   switch (type) {
     case "enter":
+      document.getElementById("welcomeTxt").style.display = "block";
+      document.querySelector("#prizeBar").style.display = "none";
+      document.getElementById("container").style.display = "none";
       btns.enter.classList.remove("none");
       btns.lotteryBar.classList.add("none");
       transform(targets.table, 2000);
@@ -322,6 +349,9 @@ function switchScreen(type) {
       btns.enter.classList.add("none");
       btns.lotteryBar.classList.remove("none");
       transform(targets.sphere, 2000);
+      document.getElementById("welcomeTxt").style.display = "none";
+      document.querySelector("#prizeBar").style.display = "block";
+      document.getElementById("container").style.display = "block";
       break;
   }
 }
