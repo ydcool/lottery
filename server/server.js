@@ -1,8 +1,6 @@
 const express = require("express");
-const opn = require("opn");
 const bodyParser = require("body-parser");
 const path = require("path");
-const chokidar = require("chokidar");
 const cfg = require("./config");
 
 const {
@@ -247,18 +245,7 @@ function getLeftUsers() {
 loadData();
 
 module.exports = {
-  run: function (devPort, noOpen) {
-    let openBrowser = true;
-    if (process.argv.length > 3) {
-      if (process.argv[3] && (process.argv[3] + "").toLowerCase() === "n") {
-        openBrowser = false;
-      }
-    }
-
-    if (noOpen) {
-      openBrowser = noOpen !== "n";
-    }
-
+  run: function (devPort) {
     if (devPort) {
       port = devPort;
     }
@@ -267,7 +254,6 @@ module.exports = {
       let host = server.address().address;
       let port = server.address().port;
       global.console.log(`lottery server listenig at http://${host}:${port}`);
-      //openBrowser && opn(`http://127.0.0.1:${port}`);
     });
   },
 };
