@@ -10,12 +10,11 @@ const DEFAULT_MESS = [
   "好想要一等奖啊！！！",
   "一等奖有没有人想要呢？",
   "五等奖也不错，只要自己能中奖就行",
-  "祝大家新年快乐！",
   "中不中奖不重要，大家吃好喝好。",
-  "新年，祝福大家事事顺遂。",
+  "祝福大家事事顺遂。",
   "作为专业陪跑的我，我就看看你们有谁跟我一样",
-  "新的一年祝福大家越来越好！",
-  "来年再战！！！",
+  "祝福大家越来越好！",
+  "还有机会！！！",
 ];
 
 let lastDanMuList = [];
@@ -206,6 +205,8 @@ let setPrizeData = (function () {
       type = currentPrize.type,
       elements = prizeElement[type],
       totalCount = currentPrize.count;
+
+    console.log("setPrizeData: ", currentPrizeIndex, count, isInit, totalCount);
 
     if (!elements) {
       elements = {

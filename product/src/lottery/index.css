@@ -24,11 +24,6 @@ a {
   margin: 0 15vh;
 }
 
-#menu {
-  z-index: 4;
-  margin-left: 15vh;
-}
-
 .canvas-box {
   position: fixed;
   left: 0;
@@ -49,8 +44,10 @@ a {
 }
 
 #menu {
+  z-index: 4;
+  margin-left: 0;
+  bottom: 20vh;
   position: absolute;
-  bottom: 2vh;
   width: 100%;
   text-align: center;
 }
@@ -173,7 +170,7 @@ button:active {
 
 #welcomeTxt {
   color: rgba(127, 255, 255, 0.75);
-  font-size: 3rem;
+  font-size: 5rem;
   margin: auto;
   position: absolute;
   text-align: center;

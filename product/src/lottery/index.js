@@ -341,6 +341,7 @@ function switchScreen(type) {
       document.getElementById("welcomeTxt").style.display = "block";
       document.querySelector("#prizeBar").style.display = "none";
       document.getElementById("container").style.display = "none";
+      document.querySelector("#menu").style.bottom = "20vh";
       btns.enter.classList.remove("none");
       btns.lotteryBar.classList.add("none");
       transform(targets.table, 2000);
@@ -349,6 +350,7 @@ function switchScreen(type) {
       btns.enter.classList.add("none");
       btns.lotteryBar.classList.remove("none");
       transform(targets.sphere, 2000);
+      document.querySelector("#menu").style.bottom = "4vh";
       document.getElementById("welcomeTxt").style.display = "none";
       document.querySelector("#prizeBar").style.display = "block";
       document.getElementById("container").style.display = "block";
@@ -543,9 +545,7 @@ function selectCard(duration = 600) {
   }
 
   let text = currentLuckys.map((item) => item[1]);
-  addQipao(
-    `恭喜${text.join("、")}获得${currentPrize.title}, 新的一年必定旺旺旺。`
-  );
+  addQipao(`恭喜${text.join("、")}获得${currentPrize.title}, 欧气爆棚！`);
 
   selectedCardIndex.forEach((cardIndex, index) => {
     changeCard(cardIndex, currentLuckys[index]);
