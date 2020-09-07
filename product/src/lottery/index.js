@@ -7,6 +7,7 @@ import {
   showPrizeList,
   setPrizeData,
   resetPrize,
+  disablePrize,
 } from "./prizeList";
 import { NUMBER_MATRIX } from "./config.js";
 
@@ -51,6 +52,7 @@ let selectedCardIndex = [],
   currentPrize,
   // 正在抽奖
   isLotting = false,
+  // 缓存当前中奖人
   currentLuckys = [];
 
 initAll();
@@ -93,6 +95,9 @@ function initAll() {
       showPrizeList(currentPrizeIndex);
       let curLucks = basicData.luckyUsers[currentPrize.type];
       setPrizeData(currentPrizeIndex, curLucks ? curLucks.length : 0, true);
+
+      //刷新其他奖品状态
+      refreshAllPrize(currentPrizeIndex);
     },
   });
 
@@ -194,6 +199,19 @@ function initCards() {
   }
 }
 
+// 刷新其他奖品状态
+function refreshAllPrize(cIdx) {
+  basicData.prizes.forEach((p) => {
+    if (p.type && p.type !== cIdx) {
+      let luckys = basicData.luckyUsers[p.type];
+      let luckyCount = luckys ? luckys.length : 0;
+      if (luckyCount === p.count) {
+        disablePrize(p.type);
+      }
+    }
+  });
+}
+
 function setLotteryStatus(status = false) {
   isLotting = status;
 }
@@ -264,11 +282,15 @@ function bindEvent() {
           // setTimeout(lottery, 400);
           lottery();
         } else {
+          // 首先检查当前奖项余量,0 则提示，
+          // 不再默认进行自动切换，须手动点选
+          if (!checkLeftPrize()) {
+            addQipao("当前奖品已全部抽取完毕！");
+            break;
+          }
           setLotteryStatus(true);
           setLotteryBtnText(true);
           //开始抽奖
-          // 每次抽奖前先保存上一次的抽奖数据
-          saveData();
           //更新剩余抽奖数目的数据显示
           changePrize();
           resetCard().then(() => {
@@ -297,14 +319,14 @@ function bindEvent() {
         break;
       // 导出抽奖结果
       case "save":
-        saveData().then((res) => {
-          resetCard().then((res) => {
-            // 将之前的记录置空
-            currentLuckys = [];
-          });
-          exportData();
-          addQipao(`数据已保存到EXCEL中。`);
+        // saveData().then((res) => {
+        resetCard().then((res) => {
+          // 将之前的记录置空
+          currentLuckys = [];
         });
+        exportData();
+        addQipao(`数据已保存到EXCEL中。`);
+        // });
         break;
     }
   });
@@ -313,26 +335,32 @@ function bindEvent() {
   addPrizeItemListener();
 }
 
+// 检查当前奖项余量
+function checkLeftPrize() {
+  currentPrize = basicData.prizes[currentPrizeIndex];
+  let luckys = basicData.luckyUsers[currentPrize.type];
+  let luckyCount = luckys ? luckys.length : 0;
+  return luckyCount !== currentPrize.count;
+}
+
+// 添加奖品点击事件
 function addPrizeItemListener() {
   document.querySelectorAll(".prize-list>li>.prize-img").forEach((v) => {
-    console.log("prize-list:", v.parentElement.id);
     v.addEventListener("click", (e) => {
       e.preventDefault();
       e.stopPropagation();
 
       let target = e.target.parentElement.parentElement.id;
 
-      console.log("prize item ==>", target);
-      console.log("currentPrize:", currentPrizeIndex, basicData, EACH_COUNT);
-      // currentPrizeIndex = target.replace("prize-item-", "");
-      // currentPrize = basicData.prizes[currentPrizeIndex];
-      // let luckys = basicData.luckyUsers[currentPrize.type];
-      // let luckyCount =
-      //   (luckys ? luckys.length : 0) + EACH_COUNT[currentPrizeIndex];
-      // // 修改左侧prize的数目和百分比
-      // setPrizeData(currentPrizeIndex, luckyCount);
+      currentPrizeIndex = target.replace("prize-item-", "");
+      currentPrize = basicData.prizes[currentPrizeIndex];
+      let luckys = basicData.luckyUsers[currentPrize.type];
+      let luckyCount = luckys ? luckys.length : 0;
+      // 修改左侧prize的数目和百分比
+      setPrizeData(currentPrizeIndex, luckyCount);
     });
   });
+  console.log("registered prize item listener.");
 }
 
 function switchScreen(type) {
@@ -669,8 +697,10 @@ function lottery() {
     selectedCardIndex.push(cardIndex);
   }
 
-  // console.log(currentLuckys);
+  // 展示动画，结束后标定抽奖状态
   selectCard();
+  // 立即保存抽奖数据
+  saveData();
 }
 
 /**
@@ -689,12 +719,14 @@ function saveData() {
 
   basicData.luckyUsers[type] = curLucky;
 
+  // 当前奖项抽取完成后，自动抽取上一级奖项
   if (currentPrize.count <= curLucky.length) {
-    currentPrizeIndex--;
-    if (currentPrizeIndex <= -1) {
-      currentPrizeIndex = 0;
-    }
-    currentPrize = basicData.prizes[currentPrizeIndex];
+    // 更改为手动选择奖项，不再支持自动切换奖项
+    // currentPrizeIndex--;
+    // if (currentPrizeIndex <= -1) {
+    //   currentPrizeIndex = 0;
+    // }
+    // currentPrize = basicData.prizes[currentPrizeIndex];
   }
 
   if (currentLuckys.length > 0) {

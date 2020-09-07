@@ -208,7 +208,7 @@ button:active {
   width: 30vh;
   height: 10vh;
   box-sizing: border-box;
-  transition: transform 1s ease-in;
+  transition: transform 0.33s ease-in;
 }
 
 .prize-item .prize-img {
@@ -222,12 +222,13 @@ button:active {
 }
 
 .prize-img img {
-  width: 90%;
-  height: 90%;
+  width: 100%;
+  height: 100%;
   position: relative;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  cursor: pointer;
 }
 
 .prize-text {

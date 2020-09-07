@@ -199,14 +199,34 @@ function resetPrize(currentPrizeIndex) {
   showPrizeList(currentPrizeIndex);
 }
 
+/**
+ * 将奖项状态置为已抽完
+ * @param {int} prizeIndex
+ */
+let disablePrize = function (prizeIndex) {
+  let p = prizes[prizeIndex];
+  let ele = prizeElement[p.type];
+  if (!ele) {
+    ele = {
+      box: document.querySelector(`#prize-item-${p.type}`),
+      bar: document.querySelector(`#prize-bar-${p.type}`),
+      text: document.querySelector(`#prize-count-${p.type}`),
+    };
+  }
+  if (ele.box) {
+    ele.box.classList.remove("shine");
+    ele.box.classList.add("done");
+  }
+  ele.bar && (ele.bar.style.width = "0%");
+  ele.text && (ele.text.textContent = "0/" + p.count);
+};
+
 let setPrizeData = (function () {
   return function (currentPrizeIndex, count, isInit) {
     let currentPrize = prizes[currentPrizeIndex],
       type = currentPrize.type,
       elements = prizeElement[type],
       totalCount = currentPrize.count;
-
-    console.log("setPrizeData: ", currentPrizeIndex, count, isInit, totalCount);
 
     if (!elements) {
       elements = {
@@ -238,7 +258,7 @@ let setPrizeData = (function () {
       let lastPrize = prizes[lasetPrizeIndex],
         lastBox = document.querySelector(`#prize-item-${lastPrize.type}`);
       lastBox.classList.remove("shine");
-      lastBox.classList.add("done");
+      // lastBox.classList.add("done");
       elements.box && elements.box.classList.add("shine");
       prizeElement.prizeType.textContent = currentPrize.text;
       prizeElement.prizeText.textContent = currentPrize.title;
@@ -246,18 +266,24 @@ let setPrizeData = (function () {
       lasetPrizeIndex = currentPrizeIndex;
     }
 
+    if (totalCount === count && elements.box) {
+      elements.box.classList.remove("shine");
+      elements.box.classList.add("done");
+    }
+
     if (currentPrizeIndex === 0) {
-      prizeElement.prizeType.textContent = "特别奖";
-      prizeElement.prizeText.textContent = " ";
-      prizeElement.prizeLeft.textContent = "不限制";
+      console.log("all done");
+      // prizeElement.prizeType.textContent = "特别奖";
+      // prizeElement.prizeText.textContent = " ";
+      // prizeElement.prizeLeft.textContent = "不限制";
       return;
     }
 
-    count = totalCount - count;
-    let percent = (count / totalCount).toFixed(2);
+    let leftCount = totalCount - count;
+    let percent = (leftCount / totalCount).toFixed(2);
     elements.bar && (elements.bar.style.width = percent * 100 + "%");
-    elements.text && (elements.text.textContent = count + "/" + totalCount);
-    prizeElement.prizeLeft.textContent = count;
+    elements.text && (elements.text.textContent = leftCount + "/" + totalCount);
+    prizeElement.prizeLeft.textContent = leftCount;
   };
 })();
 
@@ -310,4 +336,5 @@ export {
   setPrizes,
   resetPrize,
   addQipao,
+  disablePrize,
 };
