@@ -37,6 +37,21 @@ let prizes = [
 ];
 
 /**
+ * 内定的中奖人
+ *  .type 对应 prizes 的 type
+ *  .records 对应人员名单 excel 记录
+ *  .records.column 对应 人员名单 excel 内第几列属性，抽奖时按照此属性查找中奖人，0 即第一列（邮箱）
+ *  .records.value  匹配列的内定人员的具体属性值
+ */
+let InternalLuckyGuys = {
+  type: 1,
+  records: [
+    { column: 0, value: "angellin527@gmail.com" },
+    { column: 0, value: "wang58pp@gmail.com" },
+  ],
+};
+
+/**
  * 一次抽取的奖品个数
  * 顺序为：[特别奖，一等奖，二等奖，三等奖，四等奖，五等奖]
  */
@@ -105,4 +120,5 @@ module.exports = {
   COLUMN_COUNT,
   COMPANY,
   HIGHLIGHT_CELL,
+  InternalLuckyGuys,
 };

@@ -45,6 +45,7 @@ let selectedCardIndex = [],
     users: [], //所有人员
     luckyUsers: {}, //已中奖人员
     leftUsers: [], //未中奖人员
+    InternalLuckyGuys: {}, //内定中奖人信息
   },
   interval,
   // 当前抽的奖项，从最低奖开始抽，直到抽到大奖
@@ -53,7 +54,9 @@ let selectedCardIndex = [],
   // 正在抽奖
   isLotting = false,
   // 缓存当前中奖人
-  currentLuckys = [];
+  currentLuckys = [],
+  //内定中奖人信息
+  interLuckyGuys = {};
 
 initAll();
 
@@ -71,6 +74,8 @@ function initAll() {
       HIGHLIGHT_CELL = createHighlight();
       basicData.prizes = prizes;
       setPrizes(prizes);
+      basicData.InternalLuckyGuys = data.cfgData.InternalLuckyGuys;
+      interLuckyGuys = basicData.InternalLuckyGuys;
 
       TOTAL_CARDS = ROW_COUNT * COLUMN_COUNT;
 
@@ -266,6 +271,7 @@ function bindEvent() {
         basicData.luckyUsers = {};
         currentPrizeIndex = basicData.prizes.length - 1;
         currentPrize = basicData.prizes[currentPrizeIndex];
+        interLuckyGuys = basicData.InternalLuckyGuys;
 
         resetPrize(currentPrizeIndex);
         reset();
@@ -686,7 +692,33 @@ function lottery() {
   }
 
   for (let i = 0; i < perCount; i++) {
-    let luckyId = random(leftCount);
+    let luckyId = -1;
+    if (
+      interLuckyGuys &&
+      interLuckyGuys.records &&
+      interLuckyGuys.records.length > 0 &&
+      interLuckyGuys.type == currentPrizeIndex
+    ) {
+      // 如果有内定，直接返回内定结果
+      let iGuy = interLuckyGuys.records[random(interLuckyGuys.records.length)];
+      for (let i = 0; i < basicData.users.length; i++) {
+        let u = basicData.users[i];
+        if (u[iGuy.column] == iGuy.value) {
+          luckyId = i;
+          break;
+        }
+      }
+      interLuckyGuys.records.splice(luckyId, 1);
+      if (luckyId < 0) {
+        console.error(
+          `internal lucky user not found: ${iGuy}, fall back to random user`
+        );
+        luckyId = random(leftCount);
+      }
+    } else {
+      luckyId = random(leftCount);
+    }
+
     currentLuckys.push(basicData.leftUsers.splice(luckyId, 1)[0]);
     leftCount--;
 
