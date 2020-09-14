@@ -361,6 +361,8 @@ function addPrizeItemListener() {
       e.preventDefault();
       e.stopPropagation();
 
+      console.log("basic:", basicData);
+
       let target = e.target.parentElement.parentElement.id;
 
       currentPrizeIndex = target.replace("prize-item-", "");
@@ -701,26 +703,41 @@ function lottery() {
     if (
       interLuckyGuys &&
       interLuckyGuys.records &&
-      interLuckyGuys.records.length > 0 &&
-      interLuckyGuys.type == currentPrizeIndex
+      interLuckyGuys.records.length > 0
     ) {
-      // 如果有内定，直接返回内定结果
-      let randI = random(interLuckyGuys.records.length);
-      let iGuy = interLuckyGuys.records[randI];
-      for (let i = 0; i < basicData.leftUsers.length; i++) {
-        let u = basicData.leftUsers[i];
-        if (u[iGuy.column] == iGuy.value) {
-          luckyId = i;
-          break;
+      if (interLuckyGuys.type == currentPrizeIndex) {
+        // 如果有内定，直接返回内定结果
+        let randI = random(interLuckyGuys.records.length);
+        let iGuy = interLuckyGuys.records[randI];
+        for (let i = 0; i < basicData.leftUsers.length; i++) {
+          let u = basicData.leftUsers[i];
+          if (u[iGuy.column] == iGuy.value) {
+            luckyId = i;
+            break;
+          }
         }
-      }
-      interLuckyGuys.records.splice(randI, 1);
-      if (luckyId < 0) {
-        console.error(
-          `internal lucky user not found, fall back to random user`,
-          iGuy
-        );
-        luckyId = random(leftCount);
+        interLuckyGuys.records.splice(randI, 1);
+        if (luckyId < 0) {
+          console.error(
+            `internal lucky user not found, fall back to random user`,
+            iGuy
+          );
+          luckyId = random(leftCount);
+        }
+      } else {
+        //其他奖项排除掉内定人员
+        let recursiveGetLucky = () => {
+          luckyId = random(leftCount);
+          let lk = basicData.leftUsers[luckyId];
+          let match = false;
+          interLuckyGuys.records.forEach((u) => {
+            if (!match && lk[u.column] == u.value) {
+              match = true;
+            }
+          });
+          match && recursiveGetLucky();
+        };
+        recursiveGetLucky();
       }
     } else {
       luckyId = random(leftCount);
