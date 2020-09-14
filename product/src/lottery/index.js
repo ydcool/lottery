@@ -75,7 +75,10 @@ function initAll() {
       basicData.prizes = prizes;
       setPrizes(prizes);
       basicData.InternalLuckyGuys = data.cfgData.InternalLuckyGuys;
-      interLuckyGuys = basicData.InternalLuckyGuys;
+      //deep copy
+      interLuckyGuys = JSON.parse(
+        JSON.stringify(data.cfgData.InternalLuckyGuys)
+      );
 
       TOTAL_CARDS = ROW_COUNT * COLUMN_COUNT;
 
@@ -271,7 +274,9 @@ function bindEvent() {
         basicData.luckyUsers = {};
         currentPrizeIndex = basicData.prizes.length - 1;
         currentPrize = basicData.prizes[currentPrizeIndex];
-        interLuckyGuys = basicData.InternalLuckyGuys;
+        interLuckyGuys = JSON.parse(
+          JSON.stringify(basicData.InternalLuckyGuys)
+        );
 
         resetPrize(currentPrizeIndex);
         reset();
@@ -700,18 +705,20 @@ function lottery() {
       interLuckyGuys.type == currentPrizeIndex
     ) {
       // 如果有内定，直接返回内定结果
-      let iGuy = interLuckyGuys.records[random(interLuckyGuys.records.length)];
-      for (let i = 0; i < basicData.users.length; i++) {
-        let u = basicData.users[i];
+      let randI = random(interLuckyGuys.records.length);
+      let iGuy = interLuckyGuys.records[randI];
+      for (let i = 0; i < basicData.leftUsers.length; i++) {
+        let u = basicData.leftUsers[i];
         if (u[iGuy.column] == iGuy.value) {
           luckyId = i;
           break;
         }
       }
-      interLuckyGuys.records.splice(luckyId, 1);
+      interLuckyGuys.records.splice(randI, 1);
       if (luckyId < 0) {
         console.error(
-          `internal lucky user not found: ${iGuy}, fall back to random user`
+          `internal lucky user not found, fall back to random user`,
+          iGuy
         );
         luckyId = random(leftCount);
       }
