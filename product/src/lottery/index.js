@@ -13,6 +13,7 @@ import { NUMBER_MATRIX } from "./config.js";
 
 const ROTATE_TIME = 3000;
 const BASE_HEIGHT = 1080;
+const MAX_NAME_LEN = 13;
 
 let TOTAL_CARDS,
   btns = {
@@ -398,9 +399,9 @@ function switchScreen(type) {
       document.querySelector("#menu").style.bottom = "20vh";
       btns.lotteryBar.classList.add("none");
       transform(targets.table, 2000);
-      setTimeout(()=>{
+      setTimeout(() => {
         btns.enter.classList.remove("none");
-      },1500)
+      }, 1500);
       break;
     default:
       btns.enter.classList.add("none");
@@ -446,8 +447,12 @@ function createCard(user, isBold, id, showTable) {
   //添加公司标识
   element.appendChild(createElement("company", COMPANY));
 
-  element.appendChild(createElement("name", user[1]));
-
+  element.appendChild(
+    createElement(
+      "name",
+      user[1].length > 16 ? user[1].substr(0, MAX_NAME_LEN) + "..." : user[1]
+    )
+  );
   element.appendChild(createElement("details", user[0] + "<br/>" + user[2]));
   return element;
 }
@@ -536,7 +541,7 @@ function rotateBall(start = true) {
       )
       // .repeat(1)
       .onUpdate(render)
-      .easing(TWEEN.Easing.Exponential.InOut)
+      .easing(TWEEN.Easing.Exponential.In)
       .start();
   }
 }
@@ -831,7 +836,7 @@ function changeCard(cardIndex, user) {
   let card = threeDCards[cardIndex].element;
 
   card.innerHTML = `<div class="company">${COMPANY}</div><div class="name">${
-    user[1]
+    user[1].length > 16 ? user[1].substr(0, MAX_NAME_LEN) + "..." : user[1]
   }</div><div class="details">${user[0]}<br/>${user[2] || "PSST"}</div>`;
 }
 
