@@ -4,3 +4,4 @@ dist/
 temp.json
 error.json
 product/*.xlsx
+data/~$*.xlsx
