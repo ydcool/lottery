@@ -1,9 +1,9 @@
 let prizes = [
   {
     type: 0,
-    count: 100,
-    text: "特别奖",
-    title: "神秘大礼",
+    count: 0,
+    text: "无",
+    title: "所有奖品已抽取完毕",
     img: "../img/huawei.png",
   },
   {
@@ -30,7 +30,7 @@ let prizes = [
   {
     type: 4,
     count: 70,
-    text: "四等奖",
+    text: "纪念奖",
     title: "紫光檀木鲁班锁",
     img: "../img/lucky_img4.jpg",
   },
