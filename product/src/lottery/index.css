@@ -77,18 +77,18 @@ a {
 }
 
 .element .name {
-  -o-text-overflow: ellipsis;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
   position: absolute;
   top: 4.6vh;
   left: 0;
   right: 0;
   font-size: 2vh;
   font-weight: bold;
+  -o-text-overflow: ellipsis;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
   color: rgba(255, 255, 255, 0.75);
   text-shadow: 0 0 1vh rgba(0, 255, 255, 0.95);
 }

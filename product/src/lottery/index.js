@@ -305,7 +305,7 @@ function bindEvent() {
           setTimeout(function () {
             window.asdcd = false;
           }, 2000);
-          
+
           // 首先检查当前奖项余量,0 则提示，
           // 不再默认进行自动切换，须手动点选
           if (!checkLeftPrize()) {
@@ -402,12 +402,14 @@ function switchScreen(type) {
       break;
     default:
       btns.enter.classList.add("none");
-      btns.lotteryBar.classList.remove("none");
-      transform(targets.sphere, 2000);
-      document.querySelector("#menu").style.bottom = "4vh";
       document.getElementById("welcomeTxt").style.display = "none";
+      document.querySelector("#menu").style.bottom = "4vh";
       document.querySelector("#prizeBar").style.display = "block";
       document.getElementById("container").style.display = "block";
+      transform(targets.sphere, 2000);
+      setTimeout(() => {
+        btns.lotteryBar.classList.remove("none");
+      }, 2000);
       break;
   }
 }
