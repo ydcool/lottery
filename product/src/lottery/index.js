@@ -396,9 +396,11 @@ function switchScreen(type) {
       document.querySelector("#prizeBar").style.display = "none";
       document.getElementById("container").style.display = "none";
       document.querySelector("#menu").style.bottom = "20vh";
-      btns.enter.classList.remove("none");
       btns.lotteryBar.classList.add("none");
       transform(targets.table, 2000);
+      setTimeout(()=>{
+        btns.enter.classList.remove("none");
+      },1500)
       break;
     default:
       btns.enter.classList.add("none");
