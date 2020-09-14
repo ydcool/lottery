@@ -287,12 +287,25 @@ function bindEvent() {
       case "lottery":
         // 切换抽奖状态
         if (isLotting) {
+          if (window.asdcd) return;
+          window.asdcd = true;
+
+          window.timeoutaaa = setTimeout(function () {
+            window.asdcd = false;
+          }, 2000);
+
           //结束抽奖
           setLotteryBtnText(false);
           rotateBall(false);
           // setTimeout(lottery, 400);
           lottery();
         } else {
+          clearTimeout(window.timeoutaaa);
+          window.asdcd = true;
+          setTimeout(function () {
+            window.asdcd = false;
+          }, 2000);
+          
           // 首先检查当前奖项余量,0 则提示，
           // 不再默认进行自动切换，须手动点选
           if (!checkLeftPrize()) {
