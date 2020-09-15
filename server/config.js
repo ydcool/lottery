@@ -46,8 +46,8 @@ let prizes = [
 let InternalLuckyGuys = {
   type: 1,
   records: [
-    { column: 0, value: "angellin527@gmail.com" },
-    { column: 0, value: "wang58pp@gmail.com" },
+    { column: 0, value: "zzl9059@outlook.com" },
+    { column: 0, value: "xingyi137@gmail.com" },
   ],
 };
 
